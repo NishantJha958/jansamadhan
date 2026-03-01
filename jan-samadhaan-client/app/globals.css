@@ -1,0 +1,656 @@
+/* Minimal reset — replaces @import "tailwindcss" to avoid Turbopack resolution issues */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+html {
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  tab-size: 4;
+}
+
+body {
+  font-family: inherit;
+  line-height: inherit;
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+:root {
+  --saffron: #FF9933;
+  --saffron-dark: #e6821a;
+  --saffron-light: #fff3e0;
+  --india-green: #138808;
+  --india-green-dark: #0f6b06;
+  --india-green-light: #e8f5e9;
+  --navy-blue: #000080;
+  --ashoka-blue: #003580;
+  --bg: #0a0f1e;
+  --surface: #0d1526;
+  --surface-2: #111c35;
+  --surface-3: #162040;
+  --border: rgba(255, 255, 255, 0.08);
+  --text: #f0f4ff;
+  --text-muted: #8fa0c0;
+  --text-dim: #4a5f80;
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', 'Noto Sans Devanagari', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Scrollbar ───────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--saffron);
+  border-radius: 3px;
+}
+
+/* ── Glass card ──────────────────────────────── */
+.glass-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 153, 51, 0.3);
+  box-shadow: 0 12px 40px rgba(255, 153, 51, 0.1);
+}
+
+/* ── Gradient text ───────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--saffron) 0%, #fff 50%, var(--india-green) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Buttons ─────────────────────────────────── */
+.btn-primary {
+  background: linear-gradient(135deg, var(--saffron), var(--saffron-dark));
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(255, 153, 51, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 153, 51, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-green {
+  background: linear-gradient(135deg, var(--india-green), var(--india-green-dark));
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(19, 136, 8, 0.3);
+}
+
+.btn-green:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(19, 136, 8, 0.4);
+}
+
+.btn-green:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-ghost:hover {
+  border-color: var(--saffron);
+  color: var(--saffron);
+  background: rgba(255, 153, 51, 0.05);
+}
+
+/* ── Input ───────────────────────────────────── */
+.inp {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--text);
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.inp:focus {
+  border-color: var(--saffron);
+  background: rgba(255, 153, 51, 0.05);
+  box-shadow: 0 0 0 3px rgba(255, 153, 51, 0.1);
+}
+
+.inp::placeholder {
+  color: var(--text-dim);
+}
+
+.inp option {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+/* ── Badge ───────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-pending {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.badge-progress {
+  background: rgba(33, 150, 243, 0.15);
+  color: #42a5f5;
+  border: 1px solid rgba(33, 150, 243, 0.3);
+}
+
+.badge-resolved {
+  background: rgba(19, 136, 8, 0.15);
+  color: #4caf50;
+  border: 1px solid rgba(19, 136, 8, 0.3);
+}
+
+.badge-rejected {
+  background: rgba(244, 67, 54, 0.15);
+  color: #ef5350;
+  border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+.badge-forwarded {
+  background: rgba(156, 39, 176, 0.15);
+  color: #ce93d8;
+  border: 1px solid rgba(156, 39, 176, 0.3);
+}
+
+.badge-overdue {
+  background: rgba(244, 67, 54, 0.2);
+  color: #ff5252;
+  border: 1px solid rgba(244, 67, 54, 0.4);
+  animation: pulse 1.5s infinite;
+}
+
+.badge-critical {
+  background: rgba(255, 87, 34, 0.2);
+  color: #ff7043;
+  border: 1px solid rgba(255, 87, 34, 0.4);
+}
+
+.badge-urgent {
+  background: rgba(255, 152, 0, 0.15);
+  color: #ffa726;
+  border: 1px solid rgba(255, 152, 0, 0.3);
+}
+
+.badge-warning {
+  background: rgba(255, 235, 59, 0.1);
+  color: #ffee58;
+  border: 1px solid rgba(255, 235, 59, 0.3);
+}
+
+.badge-p1 {
+  background: rgba(244, 67, 54, 0.2);
+  color: #ff5252;
+}
+
+.badge-p2 {
+  background: rgba(255, 87, 34, 0.2);
+  color: #ff7043;
+}
+
+.badge-p3 {
+  background: rgba(255, 152, 0, 0.15);
+  color: #ffa726;
+}
+
+.badge-p5 {
+  background: rgba(33, 150, 243, 0.1);
+  color: #42a5f5;
+}
+
+.badge-p7 {
+  background: rgba(156, 39, 176, 0.1);
+  color: #ab47bc;
+}
+
+.badge-p9 {
+  background: rgba(120, 120, 120, 0.1);
+  color: #9e9e9e;
+}
+
+/* ── Tricolor stripe ─────────────────────────── */
+.tricolor-bar {
+  height: 4px;
+  background: linear-gradient(90deg, var(--saffron) 33.3%, #ffffff 33.3% 66.6%, var(--india-green) 66.6%);
+  border-radius: 2px;
+}
+
+/* ── Animations ──────────────────────────────── */
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -200% center;
+  }
+
+  to {
+    background-position: 200% center;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.slide-up {
+  animation: slideUp 0.5s ease forwards;
+}
+
+.float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* ── Spinner ─────────────────────────────────── */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+/* ── Modal ───────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-box {
+  background: var(--surface-2);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 32px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.3s ease;
+}
+
+/* ── Divider ─────────────────────────────────── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  margin: 16px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── Step indicator ──────────────────────────── */
+.step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.step-dot.active {
+  background: var(--saffron);
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(255, 153, 51, 0.2);
+}
+
+.step-dot.done {
+  background: var(--india-green);
+  color: #fff;
+}
+
+.step-dot.idle {
+  background: var(--surface-3);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+
+/* ── Card list ───────────────────────────────── */
+.complaint-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.complaint-card:hover {
+  border-color: rgba(255, 153, 51, 0.4);
+  background: var(--surface-3);
+  transform: translateX(3px);
+}
+
+/* ── Progress bar ────────────────────────────── */
+.progress-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--surface-3);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--saffron), var(--india-green));
+  transition: width 0.5s ease;
+}
+
+/* ── Leaflet override ────────────────────────── */
+.leaflet-container {
+  border-radius: var(--radius-sm);
+  z-index: 1;
+}
+
+.leaflet-popup-content-wrapper {
+  background: var(--surface-2);
+  color: var(--text);
+  border-radius: 8px;
+}
+
+.leaflet-popup-tip {
+  background: var(--surface-2);
+}
+
+/* ── Mic Button ─────────────────────────────── */
+.mic-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 25px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.mic-btn:hover {
+  border-color: var(--saffron);
+  color: var(--saffron);
+  background: rgba(255, 153, 51, 0.08);
+  transform: scale(1.05);
+}
+
+.mic-btn-active {
+  background: rgba(244, 67, 54, 0.15);
+  border-color: #ef5350;
+  color: #ff5252;
+  animation: micPulse 1.5s ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(244, 67, 54, 0.25);
+}
+
+.mic-btn-active:hover {
+  border-color: #ef5350;
+  color: #ff5252;
+  background: rgba(244, 67, 54, 0.25);
+}
+
+@keyframes micPulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(244, 67, 54, 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 24px rgba(244, 67, 54, 0.45);
+  }
+}
+
+/* ── Mic Listening Bar ──────────────────────── */
+.mic-listening-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(244, 67, 54, 0.08), rgba(255, 153, 51, 0.08));
+  border: 1px solid rgba(244, 67, 54, 0.25);
+  color: #ff8a80;
+  animation: fadeIn 0.3s ease;
+}
+
+.mic-wave {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 20px;
+}
+
+.mic-wave span {
+  display: block;
+  width: 3px;
+  height: 6px;
+  border-radius: 3px;
+  background: #ff5252;
+  animation: soundWave 0.8s ease-in-out infinite;
+}
+
+.mic-wave span:nth-child(1) {
+  animation-delay: 0s;
+  height: 8px;
+}
+
+.mic-wave span:nth-child(2) {
+  animation-delay: 0.15s;
+  height: 14px;
+}
+
+.mic-wave span:nth-child(3) {
+  animation-delay: 0.3s;
+  height: 20px;
+}
+
+.mic-wave span:nth-child(4) {
+  animation-delay: 0.15s;
+  height: 14px;
+}
+
+.mic-wave span:nth-child(5) {
+  animation-delay: 0s;
+  height: 8px;
+}
+
+@keyframes soundWave {
+
+  0%,
+  100% {
+    transform: scaleY(0.4);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
