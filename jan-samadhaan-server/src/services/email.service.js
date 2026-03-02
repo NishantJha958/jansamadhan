@@ -1,46 +1,54 @@
 const nodemailer = require('nodemailer');
 
 const EMAIL_CONFIG = {
-    host: process.env.SMTP_SERVER || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT || '587'),
-    senderEmail: process.env.SENDER_EMAIL || '',
-    senderPassword: process.env.SENDER_PASSWORD || '',
-    senderName: process.env.SENDER_NAME || 'भारत ई-शिकायत प्रणाली | Bharat E-Grievance',
+  host: process.env.SMTP_SERVER || 'smtp.gmail.com',
+  port: parseInt(process.env.SMTP_PORT || '587'),
+  senderEmail: process.env.SENDER_EMAIL || '',
+  senderPassword: process.env.SENDER_PASSWORD || '',
+  senderName: process.env.SENDER_NAME || 'भारत ई-शिकायत प्रणाली | Bharat E-Grievance',
 };
 
 function createTransporter() {
-    if (!EMAIL_CONFIG.senderEmail || !EMAIL_CONFIG.senderPassword) return null;
-    return nodemailer.createTransport({
-        host: EMAIL_CONFIG.host,
-        port: EMAIL_CONFIG.port,
-        secure: false,
-        auth: { user: EMAIL_CONFIG.senderEmail, pass: EMAIL_CONFIG.senderPassword },
-    });
+  if (!EMAIL_CONFIG.senderEmail || !EMAIL_CONFIG.senderPassword) return null;
+  return nodemailer.createTransport({
+    host: EMAIL_CONFIG.host,
+    port: 465, // Use 465 for secure Gmail connection
+    secure: true, // true for 465, false for other ports
+    auth: { user: EMAIL_CONFIG.senderEmail, pass: EMAIL_CONFIG.senderPassword },
+    // Force IPv4, Render sometimes has IPv6 issues with Gmail SMTP
+    // Also increase connection timeouts
+    connectionTimeout: 10000,
+    greetingTimeout: 5000,
+    socketTimeout: 20000,
+    tls: {
+      rejectUnauthorized: false
+    }
+  });
 }
 
 async function sendEmail(toEmail, subject, htmlContent) {
-    if (!toEmail) return false;
-    try {
-        const transporter = createTransporter();
-        if (!transporter) { console.log('⚠️  Email not configured, skipping.'); return false; }
-        await transporter.sendMail({
-            from: `"${EMAIL_CONFIG.senderName}" <${EMAIL_CONFIG.senderEmail}>`,
-            to: toEmail, subject, html: htmlContent,
-        });
-        console.log(`✅ Email sent to ${toEmail}`);
-        return true;
-    } catch (err) {
-        console.error(`❌ Email error: ${err.message}`);
-        return false;
-    }
+  if (!toEmail) return false;
+  try {
+    const transporter = createTransporter();
+    if (!transporter) { console.log('⚠️  Email not configured, skipping.'); return false; }
+    await transporter.sendMail({
+      from: `"${EMAIL_CONFIG.senderName}" <${EMAIL_CONFIG.senderEmail}>`,
+      to: toEmail, subject, html: htmlContent,
+    });
+    console.log(`✅ Email sent to ${toEmail}`);
+    return true;
+  } catch (err) {
+    console.error(`❌ Email error: ${err.message}`);
+    return false;
+  }
 }
 
 function sendEmailAsync(toEmail, subject, htmlContent) {
-    setImmediate(() => sendEmail(toEmail, subject, htmlContent));
+  setImmediate(() => sendEmail(toEmail, subject, htmlContent));
 }
 
 function getOTPEmailTemplate(otp, phone, purpose = 'Sign In') {
-    return `<html><head><style>
+  return `<html><head><style>
     body{font-family:'Segoe UI',sans-serif;color:#333}
     .container{max-width:600px;margin:0 auto;border:1px solid #e0e0e0;border-radius:8px}
     .header{background:linear-gradient(135deg,#FF9933,#138808);color:white;padding:25px;text-align:center}
@@ -64,10 +72,10 @@ function getOTPEmailTemplate(otp, phone, purpose = 'Sign In') {
 }
 
 function getComplaintSubmittedTemplate(data) {
-    const mapLink = data.latitude && data.longitude
-        ? `<p><strong>📍 Location:</strong> <a href="https://www.google.com/maps?q=${data.latitude},${data.longitude}" style="background:#138808;color:white;padding:6px 12px;border-radius:4px;text-decoration:none;">View on Map</a></p>`
-        : '';
-    return `<html><head><style>
+  const mapLink = data.latitude && data.longitude
+    ? `<p><strong>📍 Location:</strong> <a href="https://www.google.com/maps?q=${data.latitude},${data.longitude}" style="background:#138808;color:white;padding:6px 12px;border-radius:4px;text-decoration:none;">View on Map</a></p>`
+    : '';
+  return `<html><head><style>
     body{font-family:'Segoe UI','Noto Sans',sans-serif;color:#333;line-height:1.8}
     .container{max-width:600px;margin:0 auto;border:1px solid #e0e0e0;border-radius:8px}
     .header{background:linear-gradient(135deg,#FF9933,#138808);color:white;padding:25px;text-align:center}
