@@ -1,43 +1,39 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
+
+// If no RESEND_API_KEY is provided, we fall back to a mock/logger for development
+const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy_key_please_replace');
 
 const EMAIL_CONFIG = {
-  host: process.env.SMTP_SERVER || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '587'),
-  senderEmail: process.env.SENDER_EMAIL || '',
-  senderPassword: process.env.SENDER_PASSWORD || '',
-  senderName: process.env.SENDER_NAME || 'भारत ई-शिकायत प्रणाली | Bharat E-Grievance',
+  // If you don't have a custom domain on Resend yet, we will use Resend's default onboarding domain for testing
+  // You must verify your own domain on Resend to send to any email address.
+  // For testing, Resend only allows sending TO the email address you signed up with.
+  senderEmail: process.env.SENDER_EMAIL || 'onboarding@resend.dev',
+  senderName: process.env.SENDER_NAME || 'Bharat E-Grievance',
 };
-
-function createTransporter() {
-  if (!EMAIL_CONFIG.senderEmail || !EMAIL_CONFIG.senderPassword) return null;
-  return nodemailer.createTransport({
-    host: EMAIL_CONFIG.host,
-    port: 465, // Use 465 for secure Gmail connection
-    secure: true, // true for 465, false for other ports
-    auth: { user: EMAIL_CONFIG.senderEmail, pass: EMAIL_CONFIG.senderPassword },
-    // Render network fix: Explicitly force IPv4 socket connection
-    // because Render instances often fail to connect to Gmail via IPv6
-    tls: {
-      rejectUnauthorized: false
-    },
-    connectionTimeout: 15000,
-    greetingTimeout: 10000,
-    socketTimeout: 30000,
-    // The definitive fix for Render + Gmail timeouts:
-    family: 4
-  });
-}
 
 async function sendEmail(toEmail, subject, htmlContent) {
   if (!toEmail) return false;
+
+  if (!process.env.RESEND_API_KEY) {
+    console.log(`⚠️  Resend not configured! (Missing RESEND_API_KEY in .env)`);
+    console.log(`Mock sent email to: ${toEmail} | Subject: ${subject}`);
+    return true; // Pretend it succeeds for development if no key is set
+  }
+
   try {
-    const transporter = createTransporter();
-    if (!transporter) { console.log('⚠️  Email not configured, skipping.'); return false; }
-    await transporter.sendMail({
-      from: `"${EMAIL_CONFIG.senderName}" <${EMAIL_CONFIG.senderEmail}>`,
-      to: toEmail, subject, html: htmlContent,
+    const { data, error } = await resend.emails.send({
+      from: `${EMAIL_CONFIG.senderName} <${EMAIL_CONFIG.senderEmail}>`,
+      to: [toEmail],
+      subject: subject,
+      html: htmlContent,
     });
-    console.log(`✅ Email sent to ${toEmail}`);
+
+    if (error) {
+      console.error(`❌ Resend API Error:`, error);
+      return false;
+    }
+
+    console.log(`✅ Email sent to ${toEmail} via Resend (ID: ${data.id})`);
     return true;
   } catch (err) {
     console.error(`❌ Email error: ${err.message}`);
