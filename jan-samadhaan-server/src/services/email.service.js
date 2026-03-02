@@ -15,14 +15,16 @@ function createTransporter() {
     port: 465, // Use 465 for secure Gmail connection
     secure: true, // true for 465, false for other ports
     auth: { user: EMAIL_CONFIG.senderEmail, pass: EMAIL_CONFIG.senderPassword },
-    // Force IPv4, Render sometimes has IPv6 issues with Gmail SMTP
-    // Also increase connection timeouts
-    connectionTimeout: 10000,
-    greetingTimeout: 5000,
-    socketTimeout: 20000,
+    // Render network fix: Explicitly force IPv4 socket connection
+    // because Render instances often fail to connect to Gmail via IPv6
     tls: {
       rejectUnauthorized: false
-    }
+    },
+    connectionTimeout: 15000,
+    greetingTimeout: 10000,
+    socketTimeout: 30000,
+    // The definitive fix for Render + Gmail timeouts:
+    family: 4
   });
 }
 
