@@ -10,21 +10,11 @@ dotenv.config({ path: path.resolve(__dirname, '../.env') });
 const app = express();
 
 // Middleware
-const allowedOrigins = [
-  process.env.CLIENT_URL,
-  'http://localhost:3000',
-  'http://localhost:3001'
-].filter(Boolean);
-
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, etc.)
-    if (!origin) return callback(null, true);
-    // Allow if origin is in the explicit list
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    // Allow any Vercel preview deployment for this project
-    if (origin.match(/https:\/\/jan-samadhaan.*\.vercel\.app$/)) return callback(null, true);
-    callback(new Error('Not allowed by CORS'));
+    // Dynamically allow any origin by reflecting it back
+    // This is required when credentials: true is set
+    callback(null, true);
   },
   credentials: true
 }));
