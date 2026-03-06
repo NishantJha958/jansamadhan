@@ -529,6 +529,7 @@ export default function HomePage() {
   const [authModal, setAuthModal] = useState(null); // null | 'new' | 'returning'
   const [citizen, setCitizen] = useState(null);
   const [trackingId, setTrackingId] = useState('');
+  const [showGovtIdModal, setShowGovtIdModal] = useState(false);
 
   const handleAuthSuccess = (c) => {
     setCitizen(c);
@@ -611,6 +612,20 @@ export default function HomePage() {
       {citizen && (
         <div style={{ maxWidth: 700, margin: '10px auto 0', padding: '0 16px 60px' }}>
           <Header citizen={citizen} onLogout={() => { setCitizen(null); setScreen('home'); }} />
+
+          {/* Identity Verification Prompt */}
+          {citizen && !citizen.govt_id_verified && (
+            <div style={{ background: 'rgba(255,153,51,0.1)', border: '1px solid rgba(255,153,51,0.3)', borderRadius: 12, padding: 16, marginTop: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+              <div>
+                <h4 style={{ fontWeight: 700, color: 'var(--saffron)', fontSize: '0.95rem', margin: 0 }}>⚠️ Verify Your Identity</h4>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '4px 0 0' }}>Adding Aadhaar/PAN gives priority routing to your grievances.</p>
+              </div>
+              <button className="btn-primary" onClick={() => setShowGovtIdModal(true)} style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
+                Verify Now
+              </button>
+            </div>
+          )}
+
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 20 }}>
             <div className="glass-card" onClick={() => setScreen('form')}
               style={{ padding: 32, cursor: 'pointer', textAlign: 'center' }}
@@ -662,6 +677,19 @@ export default function HomePage() {
 
       {/* Auth Modal */}
       {authModal && <OTPModal mode={authModal} onSuccess={handleAuthSuccess} onClose={() => setAuthModal(null)} />}
+
+      {/* Govt ID Verification Modal (Post-login) */}
+      {showGovtIdModal && (
+        <GovtIDModal
+          phone={citizen.phone}
+          onVerified={(vdata) => {
+            toast.success('Identity verified successfully! 🇮🇳');
+            setCitizen({ ...citizen, govt_id_verified: true, govt_id_masked: vdata.masked, govt_id_type: vdata.id_type });
+            setShowGovtIdModal(false);
+          }}
+          onSkip={() => setShowGovtIdModal(false)}
+        />
+      )}
     </main>
   );
 }
