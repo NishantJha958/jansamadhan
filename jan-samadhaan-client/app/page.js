@@ -210,10 +210,15 @@ function ComplaintForm({ citizen, onBack }) {
   const [speechSupported, setSpeechSupported] = useState(false);
   const fileRef = useRef();
   const recognitionRef = useRef(null);
+  const isListeningRef = useRef(isListening);
 
   useEffect(() => {
     getLanguages().then(r => setLanguages(r.data.languages || {})).catch(() => { });
   }, []);
+
+  useEffect(() => {
+    isListeningRef.current = isListening;
+  }, [isListening]);
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -221,10 +226,13 @@ function ComplaintForm({ citizen, onBack }) {
       setSpeechSupported(true);
       const recognition = new SpeechRecognition();
       recognition.continuous = true;
-      recognition.interimResults = true;
+      // Use interimResults false to prevent repeated triggers on same word, wait for final phrase
+      recognition.interimResults = false;
+
       // Map app lang codes to BCP-47 speech codes
       const langMap = { en: 'en-IN', hi: 'hi-IN', bn: 'bn-IN', ta: 'ta-IN', te: 'te-IN', mr: 'mr-IN', gu: 'gu-IN', kn: 'kn-IN', ml: 'ml-IN', pa: 'pa-IN', ur: 'ur-IN', or: 'or-IN', as: 'as-IN' };
       recognition.lang = langMap[lang] || 'en-IN';
+
       recognition.onresult = (event) => {
         let finalTranscript = '';
         for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -233,24 +241,55 @@ function ComplaintForm({ citizen, onBack }) {
           }
         }
         if (finalTranscript) {
-          setDescription(prev => prev ? prev + ' ' + finalTranscript : finalTranscript);
+          setDescription(prev => prev ? prev + ' ' + finalTranscript.trim() : finalTranscript.trim());
         }
       };
-      recognition.onerror = () => setIsListening(false);
-      recognition.onend = () => setIsListening(false);
+
+      recognition.onerror = (e) => {
+        if (e.error !== 'no-speech') {
+          setIsListening(false);
+          isListeningRef.current = false;
+        }
+      };
+
+      recognition.onend = () => {
+        // Only stop if the user actually clicked the stop button
+        if (isListeningRef.current) {
+          try {
+            recognition.start();
+          } catch (e) {
+            setIsListening(false);
+            isListeningRef.current = false;
+          }
+        } else {
+          setIsListening(false);
+        }
+      };
+
       recognitionRef.current = recognition;
     }
+
+    // Cleanup on unmount or lang change
+    return () => {
+      if (recognitionRef.current) {
+        isListeningRef.current = false;
+        setIsListening(false);
+        recognitionRef.current.stop();
+      }
+    };
   }, [lang]);
 
   const toggleListening = () => {
     if (!recognitionRef.current) return;
     if (isListening) {
-      recognitionRef.current.stop();
+      isListeningRef.current = false;
       setIsListening(false);
+      recognitionRef.current.stop();
     } else {
       try {
-        recognitionRef.current.start();
+        isListeningRef.current = true;
         setIsListening(true);
+        recognitionRef.current.start();
         toast.success('🎙️ Listening... Speak now');
       } catch (e) {
         toast.error('Microphone access denied');
