@@ -255,12 +255,17 @@ function ComplaintForm({ citizen, onBack }) {
       recognition.onend = () => {
         // Only stop if the user actually clicked the stop button
         if (isListeningRef.current) {
-          try {
-            recognition.start();
-          } catch (e) {
-            setIsListening(false);
-            isListeningRef.current = false;
-          }
+          setTimeout(() => {
+            if (isListeningRef.current) {
+              try {
+                recognition.start();
+              } catch (e) {
+                console.error("Failed to restart speech recognition:", e);
+                setIsListening(false);
+                isListeningRef.current = false;
+              }
+            }
+          }, 250); // Small 250ms delay is necessary in Chrome to avoid InvalidStateError on rapid restart
         } else {
           setIsListening(false);
         }
