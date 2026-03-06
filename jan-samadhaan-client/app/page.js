@@ -609,7 +609,7 @@ export default function HomePage() {
 
       {/* Citizen logged in — action cards */}
       {citizen && (
-        <div style={{ maxWidth: 700, margin: '-30px auto 0', padding: '0 16px 60px' }}>
+        <div style={{ maxWidth: 700, margin: '10px auto 0', padding: '0 16px 60px' }}>
           <Header citizen={citizen} onLogout={() => { setCitizen(null); setScreen('home'); }} />
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 20 }}>
             <div className="glass-card" onClick={() => setScreen('form')}
