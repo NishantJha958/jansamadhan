@@ -5,7 +5,7 @@ const OTP = require('../models/OTP');
 const { sendEmailAsync, getOTPEmailTemplate } = require('../services/email.service');
 
 function generateOTP() {
-    return Math.floor(100000 + Math.random() * 900000).toString();
+    return '123456'; // Hardcoded test OTP
 }
 
 // Check if citizen exists
@@ -32,8 +32,9 @@ router.post('/send-otp', async (req, res) => {
         const otp_code = generateOTP();
         const expires_at = new Date(Date.now() + 5 * 60 * 1000);
         await OTP.create({ phone, otp_code, purpose, expires_at });
-        sendEmailAsync(email, `🔐 Your OTP Code - ${otp_code}`, getOTPEmailTemplate(otp_code, phone, purpose === 'signin' ? 'Sign In' : 'Sign Up'));
-        res.json({ success: true, message: `OTP ${otp_code} sent to ${email}`, expires_in: 300 });
+        // Commented out email sending for test OTP
+        // sendEmailAsync(email, `🔐 Your OTP Code - ${otp_code}`, getOTPEmailTemplate(otp_code, phone, purpose === 'signin' ? 'Sign In' : 'Sign Up'));
+        res.json({ success: true, message: `Test OTP 123456 will be used`, expires_in: 300 });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
